@@ -83,7 +83,7 @@ const view = () => {
 
   const viewRole = () => {
     connection
-      .query("SELECT * FROM employee JOIN role JOIN department")
+      .query("SELECT * FROM role")
       .then((roles) => {
         console.table(roles);
       })
@@ -105,14 +105,19 @@ const add = () => {
         message: "last name",
       },
       {
+        name: "role",
+        type: "input",
+        message: "role id number",
+      },
+      {
         name: "manager",
-        type: "list",
-        choices: ["1", "2", "3"],
+        type: "input",
+        message: "manager id number or NULL",
       },
       {
         name: "department",
-        type: "list",
-        choices: ["1", "2", "3"],
+        type: "input",
+        choices: "department name",
       },
       {
         name: "title",
@@ -132,32 +137,126 @@ const add = () => {
       },
     ])
     .then((answer) => {
+        console.log(answer)
       // when finished prompting, insert a new item into the db with that info
       connection.query(
-        "INSERT INTO employee SET ?",
+        ("INSERT INTO employee SET ?"),
         // QUESTION: What does the || 0 do?
         {
           first_name: answer.first,
           last_name: answer.last,
-          mangager_id: answer.manager || "",
-        },
-        "INSERT INTO department SET ?",
-        {
-          name: answer.department,
-        },
-        "INSERT INTO role SET ?",
-        {
-          title: answer.title,
-          salary: answer.salary,
+          role_id: answer.role,
+          manager_id: answer.manager,
         },
         (err) => {
           if (err) throw err;
-          console.log("You successfully added a new employee!");
+          //   console.log("You successfully added a new employee!");
           // re-prompt the user for if they want to bid or post
-          run();
+          //   run();
         }
       );
     });
+    // .then((answer) => {
+    //   // when finished prompting, insert a new item into the db with that info
+    //   connection.query(
+    //     "INSERT INTO role SET ?",
+    //     // QUESTION: What does the || 0 do?
+    //     {
+    //       title: answer.title,
+    //       salary: answer.salary,
+    //     },
+    //     (err) => {
+    //       if (err) throw err;
+    //       //   console.log("You successfully added a new employee!");
+    //       // re-prompt the user for if they want to bid or post
+    //       //   run();
+    //     }
+    //   );
+    // })
+    // .then((answer) => {
+    //   // when finished prompting, insert a new item into the db with that info
+    //   connection.query(
+    //     "INSERT INTO department SET ?",
+    //     // QUESTION: What does the || 0 do?
+    //     {
+    //       name: answer.department,
+    //     },
+    //     (err) => {
+    //       if (err) throw err;
+    //       console.log("You successfully added a new employee!");
+    //       // re-prompt the user for if they want to bid or post
+    //       run();
+    //     }
+    //   );
+    // });
 };
+
+// const update = () => {
+//   inquirer
+//     .prompt({
+//       name: "update",
+//       type: "list",
+//       message: "What would you like to update?",
+//       choices: ["Salary", "Department", "role", "manager"],
+//     })
+//     .then((answer) => {
+//       switch (answer.update) {
+//         case "salary":
+//           updateSalary();
+//           break;
+
+//         case "Department":
+//           updateDepartment();
+//           break;
+
+//         case "role":
+//           updateRole();
+//           break;
+
+//         case "manager":
+//           updateManager();
+//           break;
+
+//         default:
+//           console.log(`Invalid action: ${answer.update}`);
+//           break;
+//       }
+//     });
+
+//   const updateSalary = () => {
+//     connection
+//       .query("SELECT  FROM employee")
+//       .then((employees) => {
+//         console.table(employees);
+//       })
+//       .then(() => run());
+//   };
+
+//   const updateDepartment = () => {
+//     connection
+//       .query("SELECT * FROM department")
+//       .then((departments) => {
+//         console.table(departments);
+//       })
+//       .then(() => run());
+//   };
+
+//   const updateRole = () => {
+//     connection
+//       .query("SELECT * FROM employee JOIN role JOIN department")
+//       .then((roles) => {
+//         console.table(roles);
+//       })
+//       .then(() => run());
+//   };
+//   const updateManager = () => {
+//     connection
+//       .query("SELECT * FROM employee JOIN role JOIN department")
+//       .then((roles) => {
+//         console.table(roles);
+//       })
+//       .then(() => run());
+//   };
+// };
 
 run();

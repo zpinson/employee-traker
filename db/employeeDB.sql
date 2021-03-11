@@ -12,7 +12,7 @@ CREATE TABLE department (
 CREATE TABLE role (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	title VARCHAR(30) UNIQUE NOT NULL,
-    salary DECIMAL  NOT NULL ,
+    salary DECIMAL UNSIGNED NOT NULL ,
     department_id INT UNSIGNED NOT NULL ,
     INDEX dep_id (department_id),
     
@@ -37,9 +37,4 @@ CREATE TABLE employee (
     ON DELETE CASCADE,
 
     manager_id INT UNSIGNED,
-    INDEX man_id (manager_id),
-    CONSTRAINT fk_manager
-    FOREIGN KEY (manager_id)
-    REFERENCES employee(id)
-    ON DELETE CASCADE
 )
