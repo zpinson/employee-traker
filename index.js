@@ -145,10 +145,8 @@ const addEmployee = () => {
     ])
     .then((answer) => {
       console.log(answer);
-      // when finished prompting, insert a new item into the db with that info
       connection.query(
         "INSERT INTO employee SET ?",
-        // QUESTION: What does the || 0 do?
         {
           first_name: answer.first,
           last_name: answer.last,
@@ -157,7 +155,6 @@ const addEmployee = () => {
         (err) => {
           if (err) throw err;
           console.log("You successfully added a new employee!");
-          //   re-prompt the user for if they want to bid or post
           run();
         }
       );
@@ -190,10 +187,8 @@ const addManager = () => {
     ])
     .then((answer) => {
       console.log(answer);
-      // when finished prompting, insert a new item into the db with that info
       connection.query(
         "INSERT INTO employee SET ?",
-        // QUESTION: What does the || 0 do?
         {
           first_name: answer.first,
           last_name: answer.last,
@@ -203,7 +198,6 @@ const addManager = () => {
         (err) => {
           if (err) throw err;
           console.log("You successfully added a new employee!");
-          //   re-prompt the user for if they want to bid or post
           run();
         }
       );
@@ -221,17 +215,14 @@ const addDepartment = () => {
     ])
     .then((answer) => {
       console.log(answer);
-      // when finished prompting, insert a new item into the db with that info
       connection.query(
         "INSERT INTO department SET ?",
-        // QUESTION: What does the || 0 do?
         {
           name: answer.department,
         },
         (err) => {
           if (err) throw err;
           console.log("You successfully added a new department!");
-          //   re-prompt the user for if they want to bid or post
           run();
         }
       );
@@ -277,7 +268,6 @@ const addRole = () => {
         (err) => {
           if (err) throw err;
           console.log("You successfully added a new role!");
-          //   re-prompt the user for if they want to bid or post
           run();
         }
       );
@@ -314,91 +304,5 @@ const update = () => {
         );
       });
   };
-
-// const update = () => {
-//   inquirer
-//     .prompt({
-//       name: "update",
-//       type: "list",
-//       message: "What would you like to update?",
-//       choices: ["employee", "department", "role"],
-//     })
-//     .then((answer) => {
-//       switch (answer.update) {
-//         case "employee":
-//           updateEployee();
-//           break;
-
-//         case "Department":
-//           updateDepartment();
-//           break;
-
-//         case "role":
-//           updateRole();
-//           break;
-
-//         default:
-//           console.log(`Invalid action: ${answer.update}`);
-//           break;
-//       }
-//     });
-
-//   const updateSalary = () => {
-//     connection
-//       .query("SELECT  FROM employee")
-//       .then((employees) => {
-//         console.table(employees);
-//       })
-//       .then(() => run());
-//   };
-
-//   const updateDepartment = () => {
-//     inquirer
-//       .prompt([
-//         {
-//           name: "id",
-//           type: "input",
-//           message: "id of employee you would like to change role",
-//         },
-//         {
-//           name: "newRole",
-//           type: "input",
-//           message: "new role id",
-//         },
-//       ])
-//       .then((answer) => {
-//         console.log(answer);
-//         // when finished prompting, insert a new item into the db with that info
-//         connection.query(
-//           `UPDATE "employee" SET "role_id" = ${answer.newRole} WHERE "id" = ${id}`,
-//           // QUESTION: What does the || 0 do?
-
-//           (err) => {
-//             if (err) throw err;
-//             console.log("You successfully changed employee role!");
-//             //   re-prompt the user for if they want to bid or post
-//             run();
-//           }
-//         );
-//       });
-//   };
-
-//   const updateRole = () => {
-//     connection
-//       .query("SELECT * FROM employee JOIN role JOIN department")
-//       .then((roles) => {
-//         console.table(roles);
-//       })
-//       .then(() => run());
-//   };
-//   const updateManager = () => {
-//     connection
-//       .query("SELECT * FROM employee JOIN role JOIN department")
-//       .then((roles) => {
-//         console.table(roles);
-//       })
-//       .then(() => run());
-//   };
-// };
 
 run();
