@@ -11,7 +11,7 @@ const run = () => {
       choices: [
         "View all employees / Department / Role",
         "Add  employees / Department / Role",
-        "update employee / role",
+        "update employee's role",
       ],
     })
     .then((answer) => {
@@ -24,7 +24,7 @@ const run = () => {
           add();
           break;
 
-        case "update employee / role":
+        case "update employee's role":
           update();
           break;
 
@@ -97,12 +97,16 @@ const add = () => {
       name: "action",
       type: "list",
       message: "What would you like to add?",
-      choices: ["eployee", "role", "department"],
+      choices: ["employee", "manager", "role", "department"],
     })
     .then((answer) => {
       switch (answer.action) {
         case "employee":
           addEmployee();
+          break;
+
+        case "manager":
+          addManager();
           break;
 
         case "role":
@@ -119,7 +123,48 @@ const add = () => {
       }
     });
 };
+
 const addEmployee = () => {
+  inquirer
+    .prompt([
+      {
+        name: "first",
+        type: "input",
+        message: "first name",
+      },
+      {
+        name: "last",
+        type: "input",
+        message: "last name",
+      },
+      {
+        name: "role",
+        type: "input",
+        message: "role id number",
+      },
+    ])
+    .then((answer) => {
+      console.log(answer);
+      // when finished prompting, insert a new item into the db with that info
+      connection.query(
+        "INSERT INTO employee SET ?",
+        // QUESTION: What does the || 0 do?
+        {
+          first_name: answer.first,
+          last_name: answer.last,
+          role_id: answer.role,
+        },
+        (err) => {
+          if (err) throw err;
+          console.log("You successfully added a new employee!");
+          //   re-prompt the user for if they want to bid or post
+          run();
+        }
+      );
+    });
+};
+
+const addManager = () => {
   inquirer
     .prompt([
       {
@@ -140,7 +185,7 @@ const addEmployee = () => {
       {
         name: "manager",
         type: "input",
-        message: "manager id number or NULL",
+        message: "manager id number",
       },
     ])
     .then((answer) => {
@@ -164,6 +209,7 @@ const addEmployee = () => {
       );
     });
 };
+
 const addDepartment = () => {
   inquirer
     .prompt([
@@ -238,55 +284,36 @@ const addRole = () => {
     });
 };
 
-//   {
-//     name: "title",
-//     type: "input",
-//     message: "employee role",
-//   },
-//   {
-//     name: "salary",
-//     type: "input",
-//     message: "Salary?",
-//     validate(value) {
-//       if (isNaN(value) === false) {
-//         return true;
-//       }
-//       return false;
-//     },
+const update = () => {
+    inquirer
+      .prompt([
+        {
+          name: "id",
+          type: "input",
+          message: "id of employee you would like to change role",
+        },
+        {
+          name: "newRole",
+          type: "input",
+          message: "new role id",
+        },
+      ])
+      .then((answer) => {
+        console.log(answer);
+        // when finished prompting, insert a new item into the db with that info
+        connection.query(
+          `UPDATE employee SET role_id = ${answer.newRole} WHERE id = ${answer.id}`,
+          // QUESTION: What does the || 0 do?
 
-// .then((answer) => {
-//   // when finished prompting, insert a new item into the db with that info
-//   connection.query(
-//     "INSERT INTO role SET ?",
-//     // QUESTION: What does the || 0 do?
-//     {
-//       title: answer.title,
-//       salary: answer.salary,
-//     },
-//     (err) => {
-//       if (err) throw err;
-//       //   console.log("You successfully added a new employee!");
-//       // re-prompt the user for if they want to bid or post
-//       //   run();
-//     }
-//   );
-// })
-// .then((answer) => {
-//   // when finished prompting, insert a new item into the db with that info
-//   connection.query(
-//     "INSERT INTO department SET ?",
-//     // QUESTION: What does the || 0 do?
-//     {
-//       name: answer.department,
-//     },
-//     (err) => {
-//       if (err) throw err;
-//       console.log("You successfully added a new employee!");
-//       // re-prompt the user for if they want to bid or post
-//       run();
-//     }
-//   );
-// });
+          (err) => {
+            if (err) throw err;
+            console.log("You successfully changed employee role!");
+            //   re-prompt the user for if they want to bid or post
+            run();
+          }
+        );
+      });
+  };
 
 // const update = () => {
 //   inquirer
@@ -294,12 +321,12 @@ const addRole = () => {
 //       name: "update",
 //       type: "list",
 //       message: "What would you like to update?",
-//       choices: ["Salary", "Department", "role", "manager"],
+//       choices: ["employee", "department", "role"],
 //     })
 //     .then((answer) => {
 //       switch (answer.update) {
-//         case "salary":
-//           updateSalary();
+//         case "employee":
+//           updateEployee();
 //           break;
 
 //         case "Department":
@@ -308,10 +335,6 @@ const addRole = () => {
 
 //         case "role":
 //           updateRole();
-//           break;
-
-//         case "manager":
-//           updateManager();
 //           break;
 
 //         default:
@@ -330,12 +353,34 @@ const addRole = () => {
 //   };
 
 //   const updateDepartment = () => {
-//     connection
-//       .query("SELECT * FROM department")
-//       .then((departments) => {
-//         console.table(departments);
-//       })
-//       .then(() => run());
+//     inquirer
+//       .prompt([
+//         {
+//           name: "id",
+//           type: "input",
+//           message: "id of employee you would like to change role",
+//         },
+//         {
+//           name: "newRole",
+//           type: "input",
+//           message: "new role id",
+//         },
+//       ])
+//       .then((answer) => {
+//         console.log(answer);
+//         // when finished prompting, insert a new item into the db with that info
+//         connection.query(
+//           `UPDATE "employee" SET "role_id" = ${answer.newRole} WHERE "id" = ${id}`,
+//           // QUESTION: What does the || 0 do?
+
+//           (err) => {
+//             if (err) throw err;
+//             console.log("You successfully changed employee role!");
+//             //   re-prompt the user for if they want to bid or post
+//             run();
+//           }
+//         );
+//       });
 //   };
 
 //   const updateRole = () => {
