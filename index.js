@@ -93,6 +93,34 @@ const view = () => {
 
 const add = () => {
   inquirer
+    .prompt({
+      name: "action",
+      type: "list",
+      message: "What would you like to add?",
+      choices: ["eployee", "role", "department"],
+    })
+    .then((answer) => {
+      switch (answer.action) {
+        case "employee":
+          addEmployee();
+          break;
+
+        case "role":
+          addRole();
+          break;
+
+        case "department":
+          addDepartment();
+          break;
+
+        default:
+          console.log(`Invalid action: ${answer.action}`);
+          break;
+      }
+    });
+};
+const addEmployee = () => {
+  inquirer
     .prompt([
       {
         name: "first",
@@ -114,15 +142,63 @@ const add = () => {
         type: "input",
         message: "manager id number or NULL",
       },
+    ])
+    .then((answer) => {
+      console.log(answer);
+      // when finished prompting, insert a new item into the db with that info
+      connection.query(
+        "INSERT INTO employee SET ?",
+        // QUESTION: What does the || 0 do?
+        {
+          first_name: answer.first,
+          last_name: answer.last,
+          role_id: answer.role,
+          manager_id: answer.manager,
+        },
+        (err) => {
+          if (err) throw err;
+          console.log("You successfully added a new employee!");
+          //   re-prompt the user for if they want to bid or post
+          run();
+        }
+      );
+    });
+};
+const addDepartment = () => {
+  inquirer
+    .prompt([
       {
         name: "department",
         type: "input",
-        choices: "department name",
+        message: "department name",
       },
+    ])
+    .then((answer) => {
+      console.log(answer);
+      // when finished prompting, insert a new item into the db with that info
+      connection.query(
+        "INSERT INTO department SET ?",
+        // QUESTION: What does the || 0 do?
+        {
+          name: answer.department,
+        },
+        (err) => {
+          if (err) throw err;
+          console.log("You successfully added a new department!");
+          //   re-prompt the user for if they want to bid or post
+          run();
+        }
+      );
+    });
+};
+
+const addRole = () => {
+  inquirer
+    .prompt([
       {
         name: "title",
         type: "input",
-        message: "employee role",
+        message: "employee title",
       },
       {
         name: "salary",
@@ -135,61 +211,82 @@ const add = () => {
           return false;
         },
       },
+      {
+        name: "departmentId",
+        type: "input",
+        message: "department id",
+      },
     ])
     .then((answer) => {
-        console.log(answer)
+      console.log(answer);
       // when finished prompting, insert a new item into the db with that info
       connection.query(
-        ("INSERT INTO employee SET ?"),
+        "INSERT INTO role SET ?",
         // QUESTION: What does the || 0 do?
         {
-          first_name: answer.first,
-          last_name: answer.last,
-          role_id: answer.role,
-          manager_id: answer.manager,
+          title: answer.title,
+          salary: answer.salary,
+          department_id: answer.departmentId,
         },
         (err) => {
           if (err) throw err;
-          //   console.log("You successfully added a new employee!");
-          // re-prompt the user for if they want to bid or post
-          //   run();
+          console.log("You successfully added a new role!");
+          //   re-prompt the user for if they want to bid or post
+          run();
         }
       );
     });
-    // .then((answer) => {
-    //   // when finished prompting, insert a new item into the db with that info
-    //   connection.query(
-    //     "INSERT INTO role SET ?",
-    //     // QUESTION: What does the || 0 do?
-    //     {
-    //       title: answer.title,
-    //       salary: answer.salary,
-    //     },
-    //     (err) => {
-    //       if (err) throw err;
-    //       //   console.log("You successfully added a new employee!");
-    //       // re-prompt the user for if they want to bid or post
-    //       //   run();
-    //     }
-    //   );
-    // })
-    // .then((answer) => {
-    //   // when finished prompting, insert a new item into the db with that info
-    //   connection.query(
-    //     "INSERT INTO department SET ?",
-    //     // QUESTION: What does the || 0 do?
-    //     {
-    //       name: answer.department,
-    //     },
-    //     (err) => {
-    //       if (err) throw err;
-    //       console.log("You successfully added a new employee!");
-    //       // re-prompt the user for if they want to bid or post
-    //       run();
-    //     }
-    //   );
-    // });
 };
+
+//   {
+//     name: "title",
+//     type: "input",
+//     message: "employee role",
+//   },
+//   {
+//     name: "salary",
+//     type: "input",
+//     message: "Salary?",
+//     validate(value) {
+//       if (isNaN(value) === false) {
+//         return true;
+//       }
+//       return false;
+//     },
+
+// .then((answer) => {
+//   // when finished prompting, insert a new item into the db with that info
+//   connection.query(
+//     "INSERT INTO role SET ?",
+//     // QUESTION: What does the || 0 do?
+//     {
+//       title: answer.title,
+//       salary: answer.salary,
+//     },
+//     (err) => {
+//       if (err) throw err;
+//       //   console.log("You successfully added a new employee!");
+//       // re-prompt the user for if they want to bid or post
+//       //   run();
+//     }
+//   );
+// })
+// .then((answer) => {
+//   // when finished prompting, insert a new item into the db with that info
+//   connection.query(
+//     "INSERT INTO department SET ?",
+//     // QUESTION: What does the || 0 do?
+//     {
+//       name: answer.department,
+//     },
+//     (err) => {
+//       if (err) throw err;
+//       console.log("You successfully added a new employee!");
+//       // re-prompt the user for if they want to bid or post
+//       run();
+//     }
+//   );
+// });
 
 // const update = () => {
 //   inquirer
